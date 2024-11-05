@@ -30,7 +30,7 @@ y_test = test[:, n_pixels // 2 :]
 # Fit estimators
 ESTIMATORS = {
     "Extra trees": ExtraTreesRegressor(
-        n_estimators=10, max_features=32, random_state=0
+        n_estimators=10, max_features=25, max_depth=20, random_state=1
     ),
     "K-nn": KNeighborsRegressor(),
     "Linear regression": LinearRegression(),
@@ -38,7 +38,7 @@ ESTIMATORS = {
 }
 
 y_test_predict = dict()
-for name, estimator in ESTIMATORS.items():
+for name, estimator in ESTIMATORS.items():  
     estimator.fit(X_train, y_train)
     y_test_predict[name] = estimator.predict(X_test)
 
