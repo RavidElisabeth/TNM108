@@ -13,6 +13,17 @@ class GaussNB:
     def __init__(self):
         pass
 
+    # def group_by_class(self, data, target):
+    #     """
+    #     :param data: Training set
+    #     :param target: the list of class labels labelling data
+    #     :return:
+    #     Separate the data by their target class; that is, create one group for every value of the target class. It returns all the groups        
+    #     """
+    #     separated = [[x for x, t in zip(data, target) if t == c] for c in self.target_values]
+    #     groups=[np.array(separated[0]),np.array(separated[1]),np.array(separated[2])]
+    #     return np.array(groups)
+    
     def group_by_class(self, data, target):
         """
         :param data: Training set
@@ -20,9 +31,9 @@ class GaussNB:
         :return:
         Separate the data by their target class; that is, create one group for every value of the target class. It returns all the groups        
         """
-        separated = [[x for x, t in zip(data, target) if t == c] for c in self.target_values]
-        groups=[np.array(separated[0]),np.array(separated[1]),np.array(separated[2])]
-        return np.array(groups)
+        separated = [np.array([x for x, t in zip(data, target) if t == c]) for c in self.target_values]
+        return separated  # This will be a list of numpy arrays, one for each class
+
 
     def summarize(self,data):
         """
@@ -34,22 +45,31 @@ class GaussNB:
             feature_column=data.T[index]
             yield{'stdev': statistics.stdev(feature_column),'mean': statistics.mean(feature_column)}
 
+    # def train(self, data, target):
+    #     """
+    #     :param data: a dataset
+    #     :param target: the list of class labels labelling data
+    #     :return:
+    #     For each target class:
+    #         1. yield prior_prob: the probability of each class. P(class) eg P(Iris-virginica)
+    #         2. yield summary: list of {'mean': 0.0,'stdev': 0.0} for every feature in data
+    #     """
+    #     groups = self.group_by_class(data, target)
+    #     for index in range(groups.shape[0]):
+    #         group=groups[index]
+    #         self.summaries[self.target_values[index]] = {
+    #             'prior_prob': len(group)/len(data),
+    #             'summary': [i for i in self.summarize(group)]
+    #         }
+
     def train(self, data, target):
-        """
-        :param data: a dataset
-        :param target: the list of class labels labelling data
-        :return:
-        For each target class:
-            1. yield prior_prob: the probability of each class. P(class) eg P(Iris-virginica)
-            2. yield summary: list of {'mean': 0.0,'stdev': 0.0} for every feature in data
-        """
         groups = self.group_by_class(data, target)
-        for index in range(groups.shape[0]):
-            group=groups[index]
+        for index, group in enumerate(groups):
             self.summaries[self.target_values[index]] = {
-                'prior_prob': len(group)/len(data),
+                'prior_prob': len(group) / len(data),
                 'summary': [i for i in self.summarize(group)]
             }
+
 
     def normal_pdf(self, x, mean, stdev):
         """
@@ -98,7 +118,8 @@ class GaussNB:
             for index in range(total_features):
                 feature = data[index]
                 mean = self.summaries[target_v]['summary'][index]['mean']
-                stdev = self.summaries[target_v]['summary'][index]['stdev']**2
+                #stdev = self.summaries[target_v]['summary'][index]['stdev']**2
+                stdev = self.summaries[target_v]['summary'][index]['stdev']
                 normal_prob = self.normal_pdf(feature,mean,stdev)
                 likelihood *= normal_prob
             prior_prob = self.summaries[target_v]['prior_prob']
