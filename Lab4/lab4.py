@@ -95,7 +95,3 @@ reviews_new_predicted = gs_clf.predict(reviews_new)
 # Print out the results for each test review
 for review, category in zip(reviews_new, reviews_new_predicted):
     print("%r => %s" % (review, movie.target_names[category]))
-
-
-    
-   
