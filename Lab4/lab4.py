@@ -10,7 +10,8 @@ import numpy as np
 # ---------------------- Loading data  ----------------------
 
 # Directory containing movie reviews
-moviedir = r'C:\Users\david\Documents\GitHub\TNM108\Lab4\movie_reviews'
+# moviedir = r'C:\Users\david\Documents\GitHub\TNM108\Lab4\movie_reviews'
+moviedir = r'Lab4\movie_reviews'
 
 # Load all files
 movie = load_files(moviedir, shuffle=True)
@@ -23,30 +24,30 @@ movie_train_data, movie_test_data, movie_train_target, movie_test_target = train
 
 # ---------- ALT [1] MultinomialNB ----------
 
-movie_clf = Pipeline(
-    [
-        ("vect", CountVectorizer()),
-        ("tfidf", TfidfTransformer()),
-        ("clf", MultinomialNB()),
-    ]
-)
-
-movie_clf.fit(movie_train_data, movie_train_target)
-predicted = movie_clf.predict(movie_test_data)
-print("multinomialBC accuracy ", np.mean(predicted == movie_test_target))
-
-# ---------- ALT [2] SVM ----------
-
-# movie_clf = Pipeline([
-#  ('vect', CountVectorizer()),
-#  ('tfidf', TfidfTransformer()),
-#  ('clf', SGDClassifier(loss='hinge', penalty='l2',alpha=1e-3, random_state=42
-# ,max_iter=5, tol=None)),
-# ])
+# movie_clf = Pipeline(
+#     [
+#         ("vect", CountVectorizer()),
+#         ("tfidf", TfidfTransformer()),
+#         ("clf", MultinomialNB()),
+#     ]
+# )
 
 # movie_clf.fit(movie_train_data, movie_train_target)
 # predicted = movie_clf.predict(movie_test_data)
-# print("SVM accuracy ",np.mean(predicted == movie_test_target))
+# print("multinomialBC accuracy ", np.mean(predicted == movie_test_target))
+
+# ---------- ALT [2] SVM ----------
+
+movie_clf = Pipeline([
+ ('vect', CountVectorizer()),
+ ('tfidf', TfidfTransformer()),
+ ('clf', SGDClassifier(loss='hinge', penalty='l2',alpha=1e-3, random_state=42
+,max_iter=5, tol=None)),
+])
+
+movie_clf.fit(movie_train_data, movie_train_target)
+predicted = movie_clf.predict(movie_test_data)
+print("SVM accuracy ",np.mean(predicted == movie_test_target))
 
 # ---------------------- Grid Search ----------------------
 
@@ -54,7 +55,7 @@ print("multinomialBC accuracy ", np.mean(predicted == movie_test_target))
 parameters = {
     "vect__ngram_range": [(1, 1), (1, 2)],
     "tfidf__use_idf": (True, False),
-    "clf__alpha": (1, 1e-3),
+    "clf__alpha": (1e-2, 1e-3),
 }
 
 # we gridsearch the best parameters
