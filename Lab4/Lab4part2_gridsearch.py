@@ -19,7 +19,8 @@ from sklearn import metrics
 # Parameter tuning using grid search
 from sklearn.model_selection import GridSearchCV
 
-moviedir = r"Lab4\movie_reviews" #Marcus
+# Directory
+moviedir = r"Lab4\movie_reviews"  # Marcus
 
 # loading all files.
 movie = load_files(moviedir, shuffle=True)
