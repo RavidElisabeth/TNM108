@@ -5,3 +5,4 @@ venv/
 Project/election_day_tweets_data/election_day_tweets.csv
 Project/election_day_tweets_data/bad_tweets_partial.csv
 Project/election_sentiment_results.csv
+*.csv
